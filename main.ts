@@ -14,7 +14,7 @@ const file = await Deno.open(asistenciaFile, { create: true, write: true });
 bot.on(UpdateType.Message, async ({ message }) => {
   console.log(message);
   const nick: string = message.from?.username?.toLowerCase();
-  let mensaje: string = `👋*${escapeLodash(nick)} 📅 ${date}`;
+  const mensaje: string = `👋 ${escapeLodash(nick)} 📅 ${escapeDash(date)}`;
   console.warn(mensaje);
   await bot.sendMessage({
     chat_id: message.chat.id,
@@ -28,5 +28,9 @@ bot.run({
 });
 
 function escapeLodash(nick) {
-  return nick.replace("_", "\\_");
+  return nick.replaceAll("_", "\\_");
+}
+
+function escapeDash(nick) {
+  return nick.replaceAll("-", "\\-");
 }
