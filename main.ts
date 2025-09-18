@@ -1,3 +1,4 @@
+import { writeAll } from "jsr:@std/io/write-all";
 import {
   TelegramBot,
   UpdateType,
@@ -14,16 +15,16 @@ const asistenciaFile = `${prefijo}-${date}.txt`;
 
 bot.on(UpdateType.Message, async ({ message }) => {
   console.log(message);
-  const nick: string = message.from?.username?.toLowerCase();
+  const nick: string | undefined = message.from?.username?.toLowerCase();
   const checkInFile = await Deno.open(asistenciaFile, {
     create: true,
     write: true,
     append: true,
   });
-  const mensaje: string = `👋 ${escapeLodash(nick)} 📅 ${escapeDash(date)}`;
+  const mensaje = `👋 ${escapeLodash(nick)} 📅 ${escapeDash(date)}`;
   console.warn(mensaje);
   // append at the end of checkInFile the nick
-  await Deno.writeAll(checkInFile, new TextEncoder().encode(`${nick}\n`));
+  await writeAll(checkInFile, new TextEncoder().encode(`${nick}\n`));
 
   checkInFile.close();
 
@@ -38,10 +39,10 @@ bot.run({
   polling: true,
 });
 
-function escapeLodash(nick) {
-  return nick.replaceAll("_", "\\_");
+function escapeLodash(nick: string | undefined) {
+  return nick?.replaceAll("_", "\\_");
 }
 
-function escapeDash(nick) {
-  return nick.replaceAll("-", "\\-");
+function escapeDash(nick: string | undefined) {
+  return nick?.replaceAll("-", "\\-");
 }
